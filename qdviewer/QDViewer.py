@@ -460,12 +460,12 @@ class QDViewer:
             SELECT a.VNK, a.NNK, a.VST,a.BST,a.STREIFEN,a.STREIFENNR,a.ART,a.ARTOBER,a.BREITE,a.BISBREITE,a.BLPART,
             a.BLPART3,  a.UIPART,a.UIPART3,a.LAENGE,a.FLAECHE,a.BAUJAHRGEW,a.ABNAHMEGEW,a.DAUERGEW,a.ABLAUFGEW,a.ERFART,
             a.QUELLE, a.ADATUM, a.BEMERKUNG,a.BEARBEITER,a.STAND,a.PARENTID,a.OBJEKTID,a.FLAG,
-            (a.ABSTAND_VST1+round(m.BREITE / 2)) ABSTAND_VST1,
+            (a.ABSTAND_VST1+round(IFNULL(m.BREITE,0) / 2)) ABSTAND_VST1,
             NULL ABSTAND_VST2,
-            (a.ABSTAND_BST1+round(m.BISBREITE / 2)) ABSTAND_BST1,
+            (a.ABSTAND_BST1+round(IFNULL(m.BISBREITE,0) / 2)) ABSTAND_BST1,
             NULL ABSTAND_BST2
-            FROM tmp1 a, DB001030 m
-            WHERE m.STREIFEN = "M" AND a.VNK = m.VNK AND a.NNK = m.NNK AND a.VST = m.VST;''')
+            FROM tmp1 a left join (select * from DB001030 where STREIFEN = "M") m
+            on a.VNK = m.VNK AND a.NNK = m.NNK AND a.VST = m.VST;''')
 
         print("Abstand der Außenkante berechnen...")
         daten.execute('''UPDATE tmp2 
